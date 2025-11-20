@@ -25,12 +25,21 @@ import {
   BookOpen,
   HelpCircle,
   Clock,
-  ThumbsUp
+  ThumbsUp,
+  Filter,
+  AlertCircle,
+  XCircle,
+  MoreHorizontal,
+  Lock,
+  Star,
+  Calendar
 } from 'lucide-react';
 
 // --- Types ---
-type ViewState = 'home' | 'category' | 'article' | 'ticket';
+type ViewState = 'home' | 'category' | 'article' | 'ticket' | 'my-tickets' | 'ticket-detail';
 type CategoryId = 'about' | 'museums' | 'collectibles' | 'posts' | 'value' | 'lists';
+type TicketStatus = 'open' | 'in_progress' | 'resolved' | 'closed';
+type TicketPriority = 'low' | 'normal' | 'high' | 'urgent';
 
 interface CategoryCardProps {
   icon: React.ElementType;
@@ -52,6 +61,18 @@ interface FAQ {
   answer: string;
 }
 
+interface Ticket {
+  id: string;
+  category: string;
+  status: TicketStatus;
+  title: string;
+  preview: string;
+  priority: TicketPriority;
+  comments: number;
+  date: string;
+  updatedAt: string;
+}
+
 interface CategoryData {
   id: CategoryId;
   title: string;
@@ -64,7 +85,68 @@ interface CategoryData {
   content?: React.ReactNode;
 }
 
+interface TicketMessage {
+  id: string;
+  sender: string;
+  role: 'user' | 'support';
+  message: string;
+  date: string;
+}
+
 // --- Mock Data ---
+const MOCK_TICKETS: Ticket[] = [
+  {
+    id: '10002',
+    category: 'Report Content',
+    status: 'resolved',
+    title: 'Hay un usuario intentado estafar a los demás',
+    preview: 'El usuario @elrubius ha publicado en su biografía una página scam...',
+    priority: 'urgent',
+    comments: 2,
+    date: '20 nov 2025, 03:29',
+    updatedAt: '20 nov 2025, 03:29'
+  },
+  {
+    id: '0023',
+    category: 'Privacidad y datos personales',
+    status: 'resolved',
+    title: 'Solicitud de exportación de datos',
+    preview: 'Hola, me gustaría obtener una copia de todos mis datos almacenados en la plataforma...',
+    priority: 'normal',
+    comments: 1,
+    date: 'hace 23 días',
+    updatedAt: 'hace 22 días'
+  },
+  {
+    id: '0019',
+    category: 'Problemas con Premium/Pago',
+    status: 'in_progress',
+    title: 'Error al procesar el pago de la suscripción anual',
+    preview: 'He intentado renovar mi suscripción Premium pero recibo un error 503...',
+    priority: 'high',
+    comments: 3,
+    date: 'hace 24 días',
+    updatedAt: 'hace 1 hora'
+  },
+];
+
+const MOCK_TICKET_MESSAGES: TicketMessage[] = [
+  {
+    id: '1',
+    sender: 'Pablo Becerra',
+    role: 'user',
+    message: 'El usuario @elrubius ha publicado en su biografía una página scam que te pide la tarjeta de crédito y está dejando comentarios para que el resto de los usuarios acceda',
+    date: '20 nov 2025, 03:29'
+  },
+  {
+    id: '2',
+    sender: 'Pablo Becerra 2',
+    role: 'support',
+    message: 'Muchas gracias por avisarnos, hemos eliminado todos los comentarios de @rubius y baneado su cuenta',
+    date: '20 nov 2025, 03:29'
+  }
+];
+
 const CATEGORIES_DATA: Record<string, CategoryData> = {
   about: {
     id: 'about',
@@ -207,13 +289,13 @@ const CATEGORIES_DATA: Record<string, CategoryData> = {
 
 // --- Components ---
 
-const Navbar = () => {
+const Navbar = ({ onMessagesClick, onHomeClick }: { onMessagesClick: () => void, onHomeClick: () => void }) => {
   return (
     <nav className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-white/20 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           {/* Logo Area */}
-          <div className="flex items-center gap-2 cursor-pointer group">
+          <div onClick={onHomeClick} className="flex items-center gap-2 cursor-pointer group">
             <div className="w-8 h-8 bg-gradient-to-tr from-blue-600 to-cyan-400 rounded-lg flex items-center justify-center text-white font-bold shadow-lg group-hover:scale-105 transition-transform">
               M
             </div>
@@ -222,7 +304,7 @@ const Navbar = () => {
 
           {/* Center Nav */}
           <div className="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-600">
-            <a href="#" className="flex items-center gap-1 hover:text-primary-600 transition-colors"><Home size={18} /> Inicio</a>
+            <a href="#" onClick={(e) => { e.preventDefault(); onHomeClick(); }} className="flex items-center gap-1 hover:text-primary-600 transition-colors"><Home size={18} /> Inicio</a>
             <a href="#" className="flex items-center gap-1 hover:text-primary-600 transition-colors"><Compass size={18} /> Explorar</a>
             <a href="#" className="flex items-center gap-1 hover:text-primary-600 transition-colors"><ShoppingBag size={18} /> Compras</a>
             <div className="relative group">
@@ -257,8 +339,9 @@ const Navbar = () => {
               <Bell size={20} />
               <span className="absolute top-0 right-0 block h-2 w-2 rounded-full ring-2 ring-white bg-red-500 transform translate-x-1/2 -translate-y-1/4"></span>
             </button>
-            <button className="hover:text-primary-600 transition-colors">
+            <button onClick={onMessagesClick} className="hover:text-primary-600 transition-colors relative group" title="Mis Tickets">
               <MessageSquare size={20} />
+              <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary-500 rounded-full border-2 border-white hidden group-hover:block"></span>
             </button>
             <div className="flex items-center gap-2 pl-2 border-l border-slate-200">
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 p-[2px] cursor-pointer hover:shadow-md transition-all">
@@ -283,7 +366,7 @@ const BackgroundBlobs = () => (
   </div>
 );
 
-const Hero = ({ onSearch }: { onSearch: (q: string) => void }) => {
+const Hero = ({ onSearch, onMyTicketsClick }: { onSearch: (q: string) => void, onMyTicketsClick: () => void }) => {
   return (
     <div className="relative py-16 lg:py-24 text-center px-4 overflow-hidden">
       
@@ -304,7 +387,7 @@ const Hero = ({ onSearch }: { onSearch: (q: string) => void }) => {
           Sácale el máximo partido a Museum App. Accede a guías, preguntas frecuentes y obtén soporte personalizado de nuestro equipo.
         </p>
 
-        <div className="relative max-w-2xl mx-auto transform hover:scale-[1.01] transition-all duration-300">
+        <div className="relative max-w-2xl mx-auto transform hover:scale-[1.01] transition-all duration-300 mb-6">
           <div className="absolute -inset-1 bg-gradient-to-r from-primary-300 via-purple-300 to-primary-300 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
           <div className="relative bg-white rounded-2xl shadow-xl flex items-center p-2 ring-1 ring-slate-900/5">
             <Search className="ml-4 text-slate-400 w-6 h-6" />
@@ -319,6 +402,13 @@ const Hero = ({ onSearch }: { onSearch: (q: string) => void }) => {
             </button>
           </div>
         </div>
+
+        <button 
+          onClick={onMyTicketsClick}
+          className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-primary-600 transition-colors"
+        >
+          Ver estado de mis tickets <ArrowLeft className="rotate-180" size={14} />
+        </button>
       </div>
     </div>
   );
@@ -505,6 +595,278 @@ const CategoryDetail = ({ categoryId, onBack, onArticleClick, onTicketClick }: {
                           <span className="text-sm font-medium text-slate-600 group-hover:text-slate-900">{cat.title}</span>
                       </button>
                     ))}
+                 </div>
+              </div>
+           </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const TicketListView = ({ onBack, onCreateClick, onTicketClick }: { onBack: () => void, onCreateClick: () => void, onTicketClick: (id: string) => void }) => {
+  const [filter, setFilter] = useState<'all' | TicketStatus>('all');
+
+  const filteredTickets = filter === 'all' 
+    ? MOCK_TICKETS 
+    : MOCK_TICKETS.filter(ticket => ticket.status === filter);
+
+  const getStatusBadge = (status: TicketStatus) => {
+    switch(status) {
+      case 'resolved': 
+        return <span className="px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700 border border-green-200">Resuelto</span>;
+      case 'open': 
+        return <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700 border border-blue-200">Abierto</span>;
+      case 'in_progress': 
+        return <span className="px-3 py-1 rounded-full text-xs font-bold bg-orange-100 text-orange-700 border border-orange-200">En progreso</span>;
+      case 'closed': 
+        return <span className="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200">Cerrado</span>;
+    }
+  };
+
+  const getPriorityColor = (priority: TicketPriority) => {
+    switch(priority) {
+      case 'urgent': return 'bg-red-500';
+      case 'high': return 'bg-orange-500';
+      case 'normal': return 'bg-blue-500';
+      case 'low': return 'bg-slate-400';
+    }
+  };
+
+  const getPriorityLabel = (priority: TicketPriority) => {
+     switch(priority) {
+      case 'urgent': return 'Urgente';
+      case 'high': return 'Alta';
+      case 'normal': return 'Normal';
+      case 'low': return 'Baja';
+    }
+  };
+
+  return (
+    <div className="max-w-6xl mx-auto px-4 pt-8 pb-20 animate-in fade-in slide-in-from-bottom-8 duration-500">
+      <button 
+        onClick={onBack} 
+        className="group mb-8 flex items-center text-slate-500 hover:text-primary-600 transition-colors"
+      >
+        <div className="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center mr-2 group-hover:border-primary-300 group-hover:shadow-md transition-all">
+            <ArrowLeft size={16} />
+        </div>
+        <span className="font-medium">Volver al inicio</span>
+      </button>
+
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+        <div>
+           <h1 className="text-3xl font-bold text-slate-900 mb-2">Mis Tickets de Soporte</h1>
+           <p className="text-slate-500">Gestiona y consulta el estado de tus solicitudes de ayuda.</p>
+        </div>
+        <button 
+          onClick={onCreateClick}
+          className="px-6 py-3 bg-primary-500 hover:bg-primary-600 text-white font-bold rounded-xl shadow-lg shadow-primary-500/30 flex items-center gap-2 transition-all transform hover:scale-105"
+        >
+          <PlusSquare size={18} />
+          Crear ticket de soporte
+        </button>
+      </div>
+
+      <div className="bg-white/60 backdrop-blur-md rounded-3xl border border-white/60 shadow-lg p-2 mb-8 overflow-x-auto">
+         <div className="flex gap-1 min-w-max">
+            {[
+              { id: 'all', label: 'Todos' },
+              { id: 'open', label: 'Abiertos' },
+              { id: 'in_progress', label: 'En progreso' },
+              { id: 'resolved', label: 'Resueltos' },
+              { id: 'closed', label: 'Cerrados' }
+            ].map((tab) => (
+               <button
+                  key={tab.id}
+                  onClick={() => setFilter(tab.id as any)}
+                  className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
+                    filter === tab.id 
+                    ? 'bg-white text-primary-600 shadow-md' 
+                    : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100/50'
+                  }`}
+               >
+                  {tab.label}
+               </button>
+            ))}
+         </div>
+      </div>
+
+      <div className="space-y-4">
+         {filteredTickets.length === 0 ? (
+           <div className="text-center py-20 bg-white/50 rounded-3xl border border-dashed border-slate-200">
+              <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
+                 <MessageSquare size={32} />
+              </div>
+              <h3 className="text-lg font-medium text-slate-700">No tienes tickets en esta categoría</h3>
+              <p className="text-slate-500 text-sm mt-1">Cuando crees un ticket, aparecerá aquí.</p>
+           </div>
+         ) : (
+           filteredTickets.map((ticket) => (
+             <div 
+               key={ticket.id}
+               onClick={() => onTicketClick(ticket.id)}
+               className="bg-white rounded-2xl p-6 border border-slate-100 hover:border-primary-200 hover:shadow-lg transition-all duration-300 group cursor-pointer relative overflow-hidden"
+             >
+                <div className="absolute top-0 left-0 w-1 h-full bg-primary-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                
+                <div className="flex flex-col md:flex-row justify-between md:items-start gap-4 mb-3">
+                   <div className="flex flex-wrap items-center gap-3 text-sm">
+                      <span className="font-mono font-bold text-slate-400">#{ticket.id}</span>
+                      <span className="text-slate-300">•</span>
+                      <span className="text-slate-500">{ticket.category}</span>
+                   </div>
+                   <div className="self-start">
+                      {getStatusBadge(ticket.status)}
+                   </div>
+                </div>
+
+                <h3 className="text-lg font-bold text-slate-800 mb-2 group-hover:text-primary-700 transition-colors">{ticket.title}</h3>
+                
+                <div className="flex items-start gap-2 mb-6">
+                   <span className="text-primary-500 font-medium text-sm whitespace-nowrap">Soporte:</span>
+                   <p className="text-slate-500 text-sm line-clamp-2">{ticket.preview}</p>
+                </div>
+
+                <div className="flex items-center justify-between pt-4 border-t border-slate-50">
+                   <div className="flex items-center gap-4 text-xs font-medium">
+                      <div className="flex items-center gap-1.5">
+                         <div className={`w-2 h-2 rounded-full ${getPriorityColor(ticket.priority)}`}></div>
+                         <span className="text-slate-600">{getPriorityLabel(ticket.priority)}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-slate-500">
+                         <MessageSquare size={14} />
+                         <span>{ticket.comments}</span>
+                      </div>
+                   </div>
+                   <div className="text-slate-400 text-xs">
+                      {ticket.date}
+                   </div>
+                </div>
+             </div>
+           ))
+         )}
+      </div>
+    </div>
+  );
+};
+
+const TicketDetailView = ({ ticketId, onBack }: { ticketId: string, onBack: () => void }) => {
+  const ticket = MOCK_TICKETS.find(t => t.id === ticketId) || MOCK_TICKETS[0];
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 pt-8 pb-20 animate-in fade-in slide-in-from-bottom-8 duration-500">
+      <button 
+        onClick={onBack} 
+        className="group mb-8 flex items-center text-slate-500 hover:text-primary-600 transition-colors"
+      >
+        <div className="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center mr-2 group-hover:border-primary-300 group-hover:shadow-md transition-all">
+            <ArrowLeft size={16} />
+        </div>
+        <span className="font-medium">Volver al centro de ayuda</span>
+      </button>
+
+      <div className="mb-8">
+         <h1 className="text-4xl font-extrabold text-slate-900 mb-2">Ticket #{ticket.id}</h1>
+         <p className="text-lg text-slate-500">{ticket.title}</p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left Column: Messages */}
+        <div className="lg:col-span-2 space-y-6">
+           <h2 className="text-xl font-bold text-slate-800">Mensajes</h2>
+           
+           <div className="space-y-6">
+             {MOCK_TICKET_MESSAGES.map((msg) => (
+               <div key={msg.id} className="flex gap-4">
+                  {msg.role === 'user' ? (
+                    <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white shadow-sm flex-shrink-0">
+                       <img src="https://picsum.photos/200" alt="User" className="w-full h-full object-cover" />
+                    </div>
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-primary-500 text-white flex items-center justify-center text-sm font-bold border-2 border-white shadow-sm flex-shrink-0">
+                       P
+                    </div>
+                  )}
+                  
+                  <div className="flex-1 space-y-1">
+                     <div className="flex items-center gap-2">
+                        <span className={`font-bold text-sm ${msg.role === 'support' ? 'text-primary-600' : 'text-slate-800'}`}>
+                          {msg.sender}
+                        </span>
+                        {msg.role === 'user' ? (
+                           <span className="px-2 py-0.5 bg-slate-100 text-slate-500 text-[10px] font-bold uppercase rounded-md">Tú</span>
+                        ) : (
+                           <div className="flex items-center gap-1 px-2 py-0.5 bg-primary-50 text-primary-600 text-[10px] font-bold uppercase rounded-md border border-primary-100">
+                             <CheckCircle2 size={10} /> Equipo de soporte
+                           </div>
+                        )}
+                        <span className="text-xs text-slate-400 ml-auto">{msg.date}</span>
+                     </div>
+                     
+                     <div className={`p-5 rounded-2xl text-slate-700 leading-relaxed shadow-sm border ${
+                        msg.role === 'support' 
+                        ? 'bg-primary-100 border-primary-200' 
+                        : 'bg-white border-slate-100'
+                     }`}>
+                        {msg.message}
+                     </div>
+                  </div>
+               </div>
+             ))}
+           </div>
+
+           {/* Closed Ticket State */}
+           <div className="mt-8 bg-slate-50 rounded-2xl p-8 border border-slate-200 text-center">
+              <div className="w-12 h-12 bg-slate-200 rounded-xl flex items-center justify-center mx-auto mb-4 text-slate-400">
+                 <Lock size={24} />
+              </div>
+              <h3 className="text-lg font-bold text-slate-700 mb-1">Este ticket está cerrado</h3>
+              <p className="text-slate-500 text-sm mb-6">No puedes responder a un ticket cerrado</p>
+              
+              <button className="bg-primary-500 hover:bg-primary-600 text-white px-6 py-2.5 rounded-xl font-medium transition-colors inline-flex items-center gap-2 shadow-lg shadow-primary-500/20">
+                 <Star size={16} /> Dar feedback
+              </button>
+           </div>
+        </div>
+
+        {/* Right Column: Info */}
+        <div className="space-y-6">
+           <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+              <h3 className="text-lg font-bold text-slate-800 mb-6">Información</h3>
+              
+              <div className="space-y-6">
+                 <div>
+                    <label className="text-xs font-medium text-slate-400 uppercase tracking-wider block mb-2">Estado</label>
+                    <span className="inline-flex px-3 py-1 rounded-full text-sm font-bold bg-green-100 text-green-700 border border-green-200">
+                       Resuelto
+                    </span>
+                 </div>
+                 
+                 <div>
+                    <label className="text-xs font-medium text-slate-400 uppercase tracking-wider block mb-2">Prioridad</label>
+                    <div className="flex items-center gap-2 text-red-500 font-medium">
+                       <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                       Urgent
+                    </div>
+                 </div>
+                 
+                 <div>
+                    <label className="text-xs font-medium text-slate-400 uppercase tracking-wider block mb-2">Categoría</label>
+                    <div className="font-medium text-slate-800">
+                       {ticket.category}
+                    </div>
+                 </div>
+                 
+                 <div className="pt-4 border-t border-slate-100">
+                    <div className="mb-4">
+                       <label className="text-xs font-medium text-slate-400 uppercase tracking-wider block mb-1">Creado el</label>
+                       <div className="text-sm text-slate-700">{ticket.date}</div>
+                    </div>
+                    <div>
+                       <label className="text-xs font-medium text-slate-400 uppercase tracking-wider block mb-1">Última actualización</label>
+                       <div className="text-sm text-slate-700">{ticket.updatedAt}</div>
+                    </div>
                  </div>
               </div>
            </div>
@@ -816,6 +1178,7 @@ const Footer = () => (
 export default function App() {
   const [view, setView] = useState<ViewState>('home');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
   
   // Scroll to top on view change
   useEffect(() => {
@@ -839,17 +1202,24 @@ export default function App() {
   const goHome = () => {
     setView('home');
     setSelectedCategory(null);
+    setSelectedTicketId(null);
   };
 
   return (
     <div className="min-h-screen font-sans text-slate-900 bg-slate-50 selection:bg-primary-100 selection:text-primary-700 flex flex-col">
       <BackgroundBlobs />
-      <Navbar />
+      <Navbar 
+        onHomeClick={goHome}
+        onMessagesClick={() => setView('my-tickets')}
+      />
 
       <main className="flex-grow relative z-0">
         {view === 'home' && (
           <>
-            <Hero onSearch={handleSearch} />
+            <Hero 
+              onSearch={handleSearch} 
+              onMyTicketsClick={() => setView('my-tickets')}
+            />
             <CategoryGrid onSelectCategory={handleCategorySelect} />
           </>
         )}
@@ -883,6 +1253,24 @@ export default function App() {
                     }
                 }} />
             </div>
+        )}
+
+        {view === 'my-tickets' && (
+            <TicketListView 
+              onBack={goHome}
+              onCreateClick={() => setView('ticket')}
+              onTicketClick={(id) => {
+                setSelectedTicketId(id);
+                setView('ticket-detail');
+              }}
+            />
+        )}
+
+        {view === 'ticket-detail' && selectedTicketId && (
+            <TicketDetailView 
+              ticketId={selectedTicketId}
+              onBack={() => setView('my-tickets')}
+            />
         )}
       </main>
 
