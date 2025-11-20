@@ -640,10 +640,10 @@ const TicketForm = ({ onCancel }: { onCancel: () => void }) => {
 
 const ArticleView = ({ onBack }: { onBack: () => void }) => {
   return (
-    <div className="max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-500 pt-8 pb-20">
+    <div className="max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-500 pt-6 pb-20">
       <button 
         onClick={onBack} 
-        className="group mb-8 flex items-center text-slate-500 hover:text-primary-600 transition-colors"
+        className="group mb-6 flex items-center text-slate-500 hover:text-primary-600 transition-colors"
       >
         <div className="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center mr-2 group-hover:border-primary-300 group-hover:shadow-md transition-all">
             <ArrowLeft size={16} />
@@ -652,24 +652,26 @@ const ArticleView = ({ onBack }: { onBack: () => void }) => {
       </button>
 
       <div className="bg-white/90 backdrop-blur-xl border border-white/50 shadow-xl rounded-3xl overflow-hidden">
-        {/* Banner */}
-        <div className="h-48 bg-gradient-to-r from-primary-100 to-cyan-50 relative overflow-hidden">
+        {/* Banner - Reduced height from h-48 to h-32 */}
+        <div className="h-32 bg-gradient-to-r from-primary-100 to-cyan-50 relative overflow-hidden flex items-end pb-6 px-8 md:px-12">
            <div className="absolute -right-10 -top-10 w-64 h-64 bg-primary-200/50 rounded-full blur-3xl"></div>
            <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary-200 to-transparent"></div>
-           <div className="absolute bottom-8 left-8 md:left-12 flex items-center gap-3">
-              <div className="w-12 h-12 bg-white rounded-xl shadow-md flex items-center justify-center text-primary-600">
-                 <Info size={28} />
+           
+           {/* Content container aligned to bottom via flex */}
+           <div className="relative z-10 flex items-center gap-4">
+              <div className="w-10 h-10 bg-white rounded-xl shadow-md flex items-center justify-center text-primary-600 flex-shrink-0">
+                 <Info size={20} />
               </div>
               <div>
-                  <div className="text-xs font-bold text-primary-600 uppercase tracking-wider mb-1">General</div>
-                  <h1 className="text-2xl md:text-3xl font-bold text-slate-800">Sobre Museum App</h1>
+                  <div className="text-xs font-bold text-primary-600 uppercase tracking-wider mb-0.5">General</div>
+                  <h1 className="text-2xl font-bold text-slate-800 leading-tight">Sobre Museum App</h1>
               </div>
            </div>
         </div>
 
-        <div className="p-8 md:p-12">
-            <div className="prose prose-slate prose-lg max-w-none">
-                <h2 className="text-slate-800 font-bold">¿Qué es Museum App?</h2>
+        <div className="p-8 md:p-10">
+            <div className="prose prose-slate prose-lg max-w-none prose-headings:font-bold prose-a:text-primary-600">
+                <h2 className="text-slate-800">¿Qué es Museum App?</h2>
                 <p className="text-slate-600">
                     Museum App es una <strong className="text-primary-600">red social diseñada específicamente para coleccionistas</strong> de todo el mundo. Nace de la pasión por los objetos coleccionables, de saber qué historia esconde detrás cada artículo. Nuestra misión es proporcionar un entorno social a los coleccionistas ofreciéndoles todas las herramientas posibles para ver, exhibir y organizar su colección.
                 </p>
@@ -705,19 +707,44 @@ const ArticleView = ({ onBack }: { onBack: () => void }) => {
                 </p>
             </div>
 
-            <div className="mt-12 pt-8 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="mt-10 pt-8 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-4 mb-12">
                 <div className="text-slate-500 text-sm">
                     ¿Te resultó útil este artículo?
                 </div>
                 <div className="flex gap-3">
-                    <button className="px-4 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-colors text-slate-600 text-sm font-medium">
-                        Sí, gracias
+                    <button className="px-4 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-colors text-slate-600 text-sm font-medium flex items-center gap-2">
+                        <ThumbsUp size={14} /> Sí, gracias
                     </button>
                     <button className="px-4 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-colors text-slate-600 text-sm font-medium">
                         No mucho
                     </button>
                 </div>
             </div>
+            
+            {/* Related Guides Section */}
+            <div className="bg-slate-50 rounded-2xl p-6 md:p-8">
+                <h3 className="text-lg font-bold text-slate-800 mb-4">Guías relacionadas</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {[
+                        { title: 'Guía de inicio rápido', readTime: '5 min', icon: BookOpen },
+                        { title: 'Nuestra misión', readTime: '3 min', icon: Info },
+                        { title: 'Configuración de cuenta', readTime: '4 min', icon: User }
+                    ].map((guide, i) => (
+                        <button key={i} className="flex items-start gap-3 p-4 bg-white border border-slate-100 rounded-xl hover:shadow-md hover:border-primary-200 transition-all text-left group">
+                            <div className="w-8 h-8 rounded-lg bg-primary-50 text-primary-600 flex items-center justify-center flex-shrink-0 group-hover:bg-primary-600 group-hover:text-white transition-colors">
+                                <guide.icon size={16} />
+                            </div>
+                            <div>
+                                <h4 className="font-bold text-slate-700 text-sm group-hover:text-primary-700 transition-colors">{guide.title}</h4>
+                                <div className="flex items-center gap-1 text-xs text-slate-400 mt-1">
+                                    <Clock size={12} /> {guide.readTime} de lectura
+                                </div>
+                            </div>
+                        </button>
+                    ))}
+                </div>
+            </div>
+
         </div>
       </div>
     </div>
