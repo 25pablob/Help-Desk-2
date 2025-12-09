@@ -32,11 +32,12 @@ import {
   MoreHorizontal,
   Lock,
   Star,
-  Calendar
+  Calendar,
+  Hash
 } from 'lucide-react';
 
 // --- Types ---
-type ViewState = 'home' | 'category' | 'article' | 'ticket' | 'my-tickets' | 'ticket-detail';
+type ViewState = 'home' | 'category' | 'article' | 'ticket' | 'my-tickets' | 'ticket-detail' | 'faq';
 type CategoryId = 'about' | 'museums' | 'collectibles' | 'posts' | 'value' | 'lists';
 type TicketStatus = 'open' | 'in_progress' | 'resolved' | 'closed';
 type TicketPriority = 'low' | 'normal' | 'high' | 'urgent';
@@ -289,7 +290,7 @@ const CATEGORIES_DATA: Record<string, CategoryData> = {
 
 // --- Components ---
 
-const Navbar = ({ onMessagesClick, onHomeClick }: { onMessagesClick: () => void, onHomeClick: () => void }) => {
+const Navbar = ({ onMessagesClick, onHomeClick, onFAQClick }: { onMessagesClick: () => void, onHomeClick: () => void, onFAQClick: () => void }) => {
   return (
     <nav className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-white/20 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -306,7 +307,7 @@ const Navbar = ({ onMessagesClick, onHomeClick }: { onMessagesClick: () => void,
           <div className="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-600">
             <a href="#" onClick={(e) => { e.preventDefault(); onHomeClick(); }} className="flex items-center gap-1 hover:text-primary-600 transition-colors"><Home size={18} /> Inicio</a>
             <a href="#" className="flex items-center gap-1 hover:text-primary-600 transition-colors"><Compass size={18} /> Explorar</a>
-            <a href="#" className="flex items-center gap-1 hover:text-primary-600 transition-colors"><ShoppingBag size={18} /> Compras</a>
+            <button onClick={onFAQClick} className="flex items-center gap-1 hover:text-primary-600 transition-colors"><HelpCircle size={18} /> Preguntas Frecuentes</button>
             <div className="relative group">
               <button className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-primary-50 hover:text-primary-600 transition-all">
                 <Box size={16} className="text-primary-500" /> 
@@ -462,6 +463,166 @@ const FAQItem: React.FC<{ question: string; answer: string }> = ({ question, ans
           <div className="mt-4 flex items-center gap-2">
             <span className="text-xs text-slate-400">¿Fue útil esta respuesta?</span>
             <button className="p-1 text-slate-400 hover:text-green-500 transition-colors"><ThumbsUp size={14} /></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const FAQView = ({ onBack }: { onBack: () => void }) => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [activeCategory, setActiveCategory] = useState<CategoryId | 'all'>('all');
+
+  // Flatten FAQs logic for search
+  const filteredCategories = Object.values(CATEGORIES_DATA).filter(cat => {
+    // If category is selected via sidebar, only show that category (unless search is active)
+    if (activeCategory !== 'all' && cat.id !== activeCategory && searchTerm === '') {
+      return false;
+    }
+
+    // If searching, check if any question matches
+    if (searchTerm) {
+      const hasMatchingFAQ = cat.faqs.some(faq => 
+        faq.question.toLowerCase().includes(searchTerm.toLowerCase()) || 
+        faq.answer.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      return hasMatchingFAQ;
+    }
+
+    return true;
+  });
+
+  const handleScrollTo = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    setActiveCategory(id as CategoryId);
+  };
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 pt-8 pb-20 animate-in fade-in slide-in-from-bottom-8 duration-500">
+      <button 
+        onClick={onBack} 
+        className="group mb-8 flex items-center text-slate-500 hover:text-primary-600 transition-colors"
+      >
+        <div className="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center mr-2 group-hover:border-primary-300 group-hover:shadow-md transition-all">
+            <ArrowLeft size={16} />
+        </div>
+        <span className="font-medium">Volver al inicio</span>
+      </button>
+
+      {/* Header */}
+      <div className="text-center mb-16 relative">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary-200/50 rounded-full blur-3xl -z-10"></div>
+        <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4 tracking-tight">Preguntas <span className="text-primary-600">Frecuentes</span></h1>
+        <p className="text-lg text-slate-500 max-w-2xl mx-auto">
+          Encuentra respuestas rápidas a las dudas más comunes sobre Museum App, nuestra plataforma y herramientas.
+        </p>
+
+        {/* FAQ Search */}
+        <div className="max-w-xl mx-auto mt-8 relative group">
+          <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-400 to-primary-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-200"></div>
+          <div className="relative flex items-center bg-white rounded-xl p-2 shadow-sm">
+            <Search className="ml-3 text-slate-400 w-5 h-5" />
+            <input 
+              type="text" 
+              placeholder="Buscar una pregunta..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full p-3 bg-transparent border-none focus:ring-0 text-slate-700 placeholder-slate-400"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        {/* Sidebar Navigation (Desktop) */}
+        <div className="hidden lg:block lg:col-span-1">
+          <div className="sticky top-24 space-y-2">
+            <h3 className="font-bold text-slate-900 mb-4 px-3">Categorías</h3>
+            <button 
+              onClick={() => setActiveCategory('all')}
+              className={`w-full text-left px-4 py-3 rounded-xl text-sm font-medium transition-all flex items-center gap-3 ${
+                activeCategory === 'all' 
+                ? 'bg-primary-50 text-primary-700 shadow-sm ring-1 ring-primary-100' 
+                : 'text-slate-600 hover:bg-slate-50'
+              }`}
+            >
+              <div className="w-6 h-6 rounded-md bg-slate-200 flex items-center justify-center text-slate-500"><Hash size={14} /></div>
+              Todas las preguntas
+            </button>
+            {Object.values(CATEGORIES_DATA).map((cat) => (
+              <button 
+                key={cat.id}
+                onClick={() => handleScrollTo(`faq-section-${cat.id}`)}
+                className={`w-full text-left px-4 py-3 rounded-xl text-sm font-medium transition-all flex items-center gap-3 ${
+                  activeCategory === cat.id 
+                  ? 'bg-white text-primary-700 shadow-md ring-1 ring-slate-100' 
+                  : 'text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                 <div className={`w-6 h-6 rounded-md bg-gradient-to-br ${cat.color} flex items-center justify-center text-white text-[10px]`}>
+                    <cat.icon size={12} />
+                 </div>
+                 {cat.title}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="lg:col-span-3 space-y-12">
+          {filteredCategories.length === 0 ? (
+            <div className="text-center py-20 bg-white/50 rounded-3xl border border-dashed border-slate-200">
+               <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
+                  <Search size={32} />
+               </div>
+               <h3 className="text-lg font-medium text-slate-700">No encontramos resultados</h3>
+               <p className="text-slate-500 text-sm mt-1">Intenta con otros términos de búsqueda.</p>
+            </div>
+          ) : (
+            filteredCategories.map((cat) => {
+              // Filter FAQs inside the category if search is active
+              const visibleFaqs = searchTerm 
+                ? cat.faqs.filter(f => f.question.toLowerCase().includes(searchTerm.toLowerCase()) || f.answer.toLowerCase().includes(searchTerm.toLowerCase()))
+                : cat.faqs;
+
+              if (visibleFaqs.length === 0) return null;
+
+              return (
+                <div key={cat.id} id={`faq-section-${cat.id}`} className="scroll-mt-28">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${cat.color} flex items-center justify-center text-white shadow-md`}>
+                      <cat.icon size={24} />
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold text-slate-800">{cat.title}</h2>
+                      <p className="text-slate-500 text-sm">{visibleFaqs.length} preguntas disponibles</p>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100">
+                    {visibleFaqs.map((faq, idx) => (
+                      <FAQItem key={idx} question={faq.question} answer={faq.answer} />
+                    ))}
+                  </div>
+                </div>
+              )
+            })
+          )}
+
+          {/* Contact Section at bottom */}
+          <div className="mt-12 bg-slate-900 rounded-3xl p-8 md:p-12 text-center text-white relative overflow-hidden">
+             <div className="absolute top-0 right-0 w-64 h-64 bg-primary-500 rounded-full blur-3xl opacity-20 pointer-events-none"></div>
+             <h3 className="text-2xl font-bold mb-4 relative z-10">¿No encontraste lo que buscabas?</h3>
+             <p className="text-slate-400 mb-8 max-w-lg mx-auto relative z-10">
+               Nuestro equipo de soporte está disponible para resolver dudas más específicas o problemas técnicos.
+             </p>
+             <button className="relative z-10 bg-primary-500 hover:bg-primary-600 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg shadow-primary-500/30">
+               Contactar Soporte
+             </button>
           </div>
         </div>
       </div>
@@ -1211,6 +1372,7 @@ export default function App() {
       <Navbar 
         onHomeClick={goHome}
         onMessagesClick={() => setView('my-tickets')}
+        onFAQClick={() => setView('faq')}
       />
 
       <main className="flex-grow relative z-0">
@@ -1271,6 +1433,10 @@ export default function App() {
               ticketId={selectedTicketId}
               onBack={() => setView('my-tickets')}
             />
+        )}
+
+        {view === 'faq' && (
+            <FAQView onBack={goHome} />
         )}
       </main>
 
