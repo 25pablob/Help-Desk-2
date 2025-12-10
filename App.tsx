@@ -966,7 +966,7 @@ const DownloadView = ({ onBack }: { onBack: () => void }) => {
                        platform === 'android' ? 'bg-white shadow-sm text-primary-600' : 'text-slate-500 hover:text-slate-700'
                      }`}
                   >
-                     <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M17.523 15.3414C17.523 15.3414 17.5 15.3414 17.5 15.3414C17.5 15.3414 17.5 15.3414 17.523 15.3414C17.5 15.3414 17.5 15.3414 17.523 15.3414ZM7.727 15.3414C7.727 15.3414 7.727 15.3414 7.727 15.3414C7.727 15.3414 7.727 15.3414 7.727 15.3414C7.727 15.3414 7.727 15.3414 7.727 15.3414ZM3.5 11.5457C3.5 12.1821 4.02272 12.7049 4.65909 12.7049C5.29545 12.7049 5.81818 12.1821 5.81818 11.5457V7.02298C5.81818 6.38662 5.29545 5.86389 4.65909 5.86389C4.02272 5.86389 3.5 6.38662 3.5 7.02298V11.5457ZM19.4091 12.7049C20.0455 12.7049 20.5682 12.1821 20.5682 11.5457V7.02298C20.5682 6.38662 20.0455 5.86389 19.4091 5.86389C18.7727 5.86389 18.25 6.38662 18.25 7.02298V11.5457C18.25 12.1821 18.7727 12.7049 19.4091 12.7049ZM9.68182 17.1595V21.6822C9.68182 22.3186 9.20455 22.8413 8.56818 22.8413C7.93182 22.8413 7.40909 22.3186 7.40909 21.6822V17.5913C8.09091 17.5232 8.86364 17.3868 9.68182 17.1595ZM15.5455 21.6822V17.1595C16.3636 17.3868 17.1364 17.5232 17.8182 17.5913V21.6822C17.8182 22.3186 17.2955 22.8413 16.6591 22.8413C16.0227 22.8413 15.5455 22.3186 15.5455 21.6822ZM16.6591 4.5457L18.4318 1.45479C18.6364 1.11389 18.5227 0.682068 18.1818 0.477522C17.8409 0.272976 17.4091 0.386613 17.2045 0.727522L15.3864 3.88661C14.0455 3.27298 12.5682 2.93207 10.9773 2.93207C9.38636 2.93207 7.90909 3.27298 6.56818 3.88661L4.75 0.704795C4.54545 0.363886 4.11364 0.25025 3.77273 0.454795C3.43182 0.659341 3.31818 1.09116 3.52273 1.43207L5.29545 4.52298C2.5 6.04571 0.590909 8.81843 0.386364 12.0684H21.5682C21.3636 8.81843 19.4545 6.04571 16.6591 4.5457ZM6.93182 8.31843C6.31818 8.31843 5.81818 7.81843 5.81818 7.2048C5.81818 6.59116 6.31818 6.09116 6.93182 6.09116C7.54545 6.09116 8.04545 6.59116 8.04545 7.2048C8.04545 7.81843 7.54545 8.31843 6.93182 8.31843ZM15.0227 8.31843C14.4091 8.31843 13.9091 7.81843 13.9091 7.2048C13.9091 6.59116 14.4091 6.09116 15.0227 6.09116C15.6364 6.09116 16.1364 6.59116 16.1364 7.2048C16.1364 7.81843 15.6364 8.31843 15.0227 8.31843Z"/></svg>
+                     <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M17.523 15.3414C17.523 15.3414 17.5 15.3414 17.5 15.3414C17.5 15.3414 17.5 15.3414 17.523 15.3414C17.5 15.3414 17.5 15.3414 17.523 15.3414ZM7.727 15.3414C7.727 15.3414 7.727 15.3414 7.727 15.3414C7.727 15.3414 7.727 15.3414 7.727 15.3414C7.727 15.3414 7.727 15.3414 7.727 15.3414ZM3.5 11.5457C3.5 12.1821 4.02272 12.7049 4.65909 12.7049C5.29545 12.7049 5.81818 12.1821 5.81818 11.5457V7.02298C5.81818 6.38662 5.29545 5.86389 4.65909 5.86389C4.02272 5.86389 3.5 6.38662 3.5 7.02298V11.5457ZM19.4091 12.7049C20.0455 12.7049 20.5682 12.1821 20.5682 11.5457V7.02298C20.5682 6.38662 20.0455 5.86389 19.4091 5.86389C18.7727 5.86389 18.25 6.38662 18.25 7.02298V11.5457C18.25 12.1821 18.7727 12.7049 19.4091 12.7049ZM9.68182 17.1595V21.6822C9.68182 22.3186 9.20455 22.8413 8.56818 22.8413C7.93182 22.8413 7.40909 22.3186 7.40909 21.6822V17.5913C8.09091 17.5232 8.86364 17.3868 9.68182 17.1595ZM15.5455 21.6822V17.1595C16.3636 17.3868 17.1364 17.5232 17.8182 17.5913V21.6822C17.8182 22.3186 17.2955 22.8413 16.6591 22.8413C16.0227 22.8413 15.5455 22.3186 15.5455 21.6822ZM16.6591 4.5457L18.4318 1.45479C18.6364 1.11389 18.5227 0.682068 18.1818 0.477522C17.8409 0.272976 17.4091 0.386613 17.2045 0.727522L15.3864 3.88661C14.0455 3.27298 12.5682 2.93207 10.9773 2.93207C9.38636 2.93207 7.90909 3.27298 6.56818 3.88661L4.75 0.704795C4.54545 0.363886 4.11364 0.25025 3.77273 0.454795C3.43182 0.659341 3.31818 1.09116 3.52273 1.43207L5.29545 4.52298C2.5 6.04571 0.590909 8.81843 0.386364 12.0684H21.5682C21.3636 8.81843 19.4545 6.04571 16.6591 4.5457ZM6.93182 8.31843C6.31818 5.81818 7.81843 5.81818 7.2048C5.81818 6.59116 6.31818 6.09116 6.93182 6.09116C7.54545 6.09116 8.04545 6.59116 8.04545 7.2048C8.04545 7.81843 7.54545 8.31843 6.93182 8.31843ZM15.0227 8.31843C14.4091 8.31843 13.9091 7.81843 13.9091 7.2048C13.9091 6.59116 14.4091 6.09116 15.0227 6.09116C15.6364 6.09116 16.1364 6.59116 16.1364 7.2048C16.1364 7.81843 15.6364 8.31843 15.0227 8.31843Z"/></svg>
                      Android
                   </button>
                </div>
@@ -1009,8 +1009,13 @@ const DownloadView = ({ onBack }: { onBack: () => void }) => {
             {/* Phone Animation */}
             <div className="flex justify-center">
                <div className="relative w-[300px] h-[600px] bg-slate-900 rounded-[3rem] border-8 border-slate-900 shadow-2xl overflow-hidden ring-1 ring-slate-900/50">
-                  {/* Notch */}
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-slate-900 rounded-b-xl z-20"></div>
+                  {/* Notch (Conditional) */}
+                  {platform === 'ios' && (
+                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-slate-900 rounded-b-xl z-20"></div>
+                  )}
+                  {platform === 'android' && (
+                     <div className="absolute top-2 left-1/2 -translate-x-1/2 w-3 h-3 bg-black rounded-full z-20 ring-1 ring-slate-800"></div>
+                  )}
                   
                   {/* Screen Content */}
                   <div className="w-full h-full bg-slate-50 relative flex flex-col pt-8">
@@ -1073,12 +1078,12 @@ const DownloadView = ({ onBack }: { onBack: () => void }) => {
                                 </div>
                                 <div className="flex gap-4 text-slate-600">
                                    <span className="text-xs border border-slate-300 rounded px-1 font-bold">1</span>
-                                   <MoreHorizontal className="animate-pulse text-slate-900" />
+                                   <MoreHorizontal className="text-slate-900" />
                                 </div>
                             </div>
 
                             {/* Dropdown Menu */}
-                            <div className="absolute top-20 right-2 w-48 bg-white rounded-lg shadow-xl border border-slate-100 py-2 z-20 animate-[fadeIn_3s_infinite]">
+                            <div className="absolute top-20 right-2 w-48 bg-white rounded-lg shadow-xl border border-slate-100 py-2 z-20 animate-[showMenu_4s_infinite] origin-top-right">
                                 <div className="px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">Nueva pestaña</div>
                                 <div className="px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">Historial</div>
                                 <div className="my-1 border-b border-slate-100"></div>
@@ -1091,8 +1096,8 @@ const DownloadView = ({ onBack }: { onBack: () => void }) => {
                      )}
                      
                      {/* Hand/Cursor Animation */}
-                     <div className="absolute top-1/2 left-1/2 pointer-events-none z-30 opacity-0 animate-[touch_4s_infinite]">
-                        <div className="w-8 h-8 bg-slate-900/20 rounded-full border-2 border-slate-900"></div>
+                     <div className={`absolute pointer-events-none z-30 w-8 h-8 bg-slate-900/20 rounded-full border-2 border-slate-900 opacity-0
+                        ${platform === 'ios' ? 'animate-[touchIOS_4s_infinite]' : 'animate-[touchAndroid_4s_infinite]'}`}>
                      </div>
                   </div>
                </div>
@@ -1169,11 +1174,31 @@ export default function App() {
            20%, 80% { opacity: 1; transform: scale(1); }
            90%, 100% { opacity: 0; transform: scale(0.9); }
         }
-        @keyframes touch {
-           0%, 15% { opacity: 0; top: 80%; left: 50%; transform: scale(1); }
-           20% { opacity: 1; top: 80%; left: 50%; transform: scale(0.8); }
-           25% { transform: scale(1); } 
-           100% { opacity: 0; }
+        @keyframes showMenu {
+           0%, 20% { opacity: 0; transform: scale(0.95); }
+           25% { opacity: 1; transform: scale(1); }
+           90% { opacity: 1; transform: scale(1); }
+           100% { opacity: 0; transform: scale(0.95); }
+        }
+        @keyframes touchIOS {
+           0%, 10% { opacity: 0; top: 88%; left: 50%; transform: translate(-50%, -50%) scale(1); }
+           15% { opacity: 1; top: 88%; left: 50%; transform: translate(-50%, -50%) scale(1); }
+           20% { transform: translate(-50%, -50%) scale(0.8); } /* Tap Share */
+           25% { transform: translate(-50%, -50%) scale(1); }
+           50% { top: 70%; left: 50%; } /* Move up to sheet */
+           60% { transform: translate(-50%, -50%) scale(0.8); } /* Tap Add */
+           70% { transform: translate(-50%, -50%) scale(1); }
+           100% { opacity: 0; top: 70%; left: 50%; }
+        }
+        @keyframes touchAndroid {
+           0%, 10% { opacity: 0; top: 6%; left: 90%; transform: translate(-50%, -50%) scale(1); }
+           15% { opacity: 1; top: 6%; left: 90%; transform: translate(-50%, -50%) scale(1); }
+           20% { transform: translate(-50%, -50%) scale(0.8); } /* Tap Menu */
+           25% { transform: translate(-50%, -50%) scale(1); }
+           45% { top: 22%; left: 70%; } /* Move to Install option */
+           55% { transform: translate(-50%, -50%) scale(0.8); } /* Tap Install */
+           65% { transform: translate(-50%, -50%) scale(1); }
+           100% { opacity: 0; top: 22%; left: 70%; }
         }
       `}</style>
       <Navbar 
